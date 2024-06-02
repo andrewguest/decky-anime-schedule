@@ -5,13 +5,14 @@ import {
   Menu,
   MenuItem,
   Navigation,
+  DropdownItem,
   PanelSection,
   PanelSectionRow,
   ServerAPI,
   showContextMenu,
-  staticClasses,
+  staticClasses
 } from "decky-frontend-lib";
-import { VFC } from "react";
+import { VFC, useState } from "react";
 import { FaShip } from "react-icons/fa";
 
 import logo from "../assets/logo.png";
@@ -20,6 +21,18 @@ import logo from "../assets/logo.png";
 //   left: number;
 //   right: number;
 // }
+
+enum AirType {
+  raw = "raw",
+  sub = "sub",
+  dub = "dub"
+}
+
+interface GetScheduleMethodArgs {
+  timezone: string;
+  air_type: AirType
+}
+
 
 const Content: VFC<{ serverAPI: ServerAPI }> = ({serverAPI}) => {
   // const [result, setResult] = useState<number | undefined>();
@@ -37,8 +50,47 @@ const Content: VFC<{ serverAPI: ServerAPI }> = ({serverAPI}) => {
   //   }
   // };
 
+  const { timeZone } = Intl.DateTimeFormat().resolvedOptions();
+  const timezoneOffset = (new Date()).getTimezoneOffset();
+  const dropdownOptions = [{ label: "Timezone", data: timeZone }, { label: "Timezone Offset", data: timezoneOffset }]
+
+
+  /*
+    Call the get_schedule() method from the Python file
+  */
+  const [scheduleData, setScheduleData] = useState<{}>();
+
+  const getSchedule = async (steam_deck_timezone: string, air_type: AirType) => {
+    const response = await serverAPI.callPluginMethod<GetScheduleMethodArgs, object>(
+      "get_schedule", {
+      timezone: steam_deck_timezone,
+      air_type: air_type
+    });
+
+    if (response.success) {
+      setScheduleData(response.result)
+    }
+  };
+
+  const getScheduleHandler = () => {
+    getSchedule(timeZone, AirType.raw);
+  };
+
   return (
-    <PanelSection title="Panel Section">
+    <PanelSection title="Settings">
+      <PanelSectionRow>
+        <DropdownItem
+          label="Timezone"
+          description={timeZone}
+          rgOptions={dropdownOptions}
+          selectedOption={"America/Chicago"}
+        >
+        </DropdownItem>
+      </PanelSectionRow>
+
+      <PanelSectionRow>
+      </PanelSectionRow>
+
       <PanelSectionRow>
         <ButtonItem
           layout="below"
@@ -72,6 +124,24 @@ const Content: VFC<{ serverAPI: ServerAPI }> = ({serverAPI}) => {
           }}
         >
           Router
+        </ButtonItem>
+      </PanelSectionRow>
+
+      <PanelSectionRow>
+        <ButtonItem
+          layout="inline"
+          onClick={getScheduleHandler}
+        >
+          Get anime schedule (i)
+        </ButtonItem>
+      </PanelSectionRow>
+
+      <PanelSectionRow>
+        <ButtonItem
+          layout="below"
+          onClick={getScheduleHandler}
+        >
+          Get anime schedule (b)
         </ButtonItem>
       </PanelSectionRow>
     </PanelSection>
