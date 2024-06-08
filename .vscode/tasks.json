@@ -143,6 +143,6 @@
             "group": "none",
             "command": "ssh ${config:deckuser}@${config:deckip} -p ${config:deckport} ${config:deckkey} 'echo '${config:deckpass}' | sudo -S chmod -R ug+rw ${config:deckdir}/homebrew/plugins/'",
             "problemMatcher": []
-        },
+        }
     ]
 }

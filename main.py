@@ -1,37 +1,36 @@
-import json
 import os
-from enum import Enum
-from urllib.error import HTTPError
-from urllib.parse import urlencode
-from urllib.request import urlopen
+from typing import Any
 
 # The decky plugin module is located at decky-loader/plugin
 # For easy intellisense checkout the decky-loader code one directory up
 # or add the `decky-loader/plugin` path to `python.analysis.extraPaths` in `.vscode/settings.json`
 import decky_plugin
+import httpx
+from settings import SettingsManager
 
+SETTINGS_DIR = os.environ["DECKY_PLUGIN_SETTINGS_DIR"]
 ANIME_SCHEDULE_API_URL = "https://decky-anime-schedule-api-production.up.railway.app"
 ENDPOINTS = {"schedule": "/schedule", "healthcheck": "/healthcheck"}
 
 
-# Supported "air type" values
-class AirType(Enum):
-    raw = "raw"
-    sub = "sub"
-    dub = "dub"
-
-
 class Plugin:
-    # A normal method. It can be called from JavaScript using call_plugin_function("method_1", argument1, argument2)
-    async def add(self, left, right):
-        return left + right
+    # Asyncio-compatible long-running code, executed in a task when the plugin is loaded
+    async def _main(self):
+        self.settings = SettingsManager(
+            name="settings", settings_directory=SETTINGS_DIR
+        )
 
-    def get_schedule(self, timezone: str, air_type: AirType) -> dict:
+        if self.settings.getSetting("exists") is not True:
+            decky_plugin.logger.info(
+                f"No setting  found. Adding default settings: {default_settings}"
+            )
+
+            for key, value in default_settings.items():
+                self.settings.setSetting(key, value)
+
+    # A normal method. It can be called from JavaScript using callPluginMethod("method_1", argument1, argument2)
+    async def get_schedule(self) -> dict:
         """Make a request to the API to get the schedule data then return that data to the frontend.
-
-        Args:
-            timezone (str): Timezone to convert the schedule data's datetime fields to.
-            air_type (AirType): Type of episodes to return.
 
         Returns:
             dict: A dict with the status of the API request and the data, if the request was successful.
@@ -39,30 +38,45 @@ class Plugin:
 
         json_data = {}
 
-        query_params = urlencode({"timezone": timezone, "air_type": air_type})
-        url = "?".join(
-            [f"{ANIME_SCHEDULE_API_URL}{ENDPOINTS['schedule']}", query_params]
-        )
+        url = f"{ANIME_SCHEDULE_API_URL}{ENDPOINTS['schedule']}"
+        decky_plugin.logger.info(f"Sending API request to: {url}")
 
-        try:
-            with urlopen(url) as response:
-                decoded_response = response.read().decode("utf-8")
-                json_data["status"] = "success"
-                json_data["data"] = json.loads(decoded_response)
-        except HTTPError as error:
-            error_response_body = error.read().decode("utf-8")
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url=url)
+            json_response = response.json()
+            decky_plugin.logger.info(f"API response code: {response.status_code}")
 
-            json_data["status"] = "error"
-            json_data["data"] = {
-                "status code": error.status,
-                "message": json.loads(error_response_body),
-            }
+            json_data["status"] = "success"
+            json_data["data"] = json_response
 
         return json_data
 
-    # Asyncio-compatible long-running code, executed in a task when the plugin is loaded
-    async def _main(self):
-        decky_plugin.logger.info("Hello World!")
+    async def save_setting(self, key: str, value: Any):
+        """Save the provided key/value pair as a new settings entry or update the `value`
+        of the existing `key` (if it exists).
+
+        Args:
+            key (str): The setting new to create/update.
+            value (Any): The value of the provided `key` to set.
+        """
+
+        decky_plugin.logger.info(f"Saving new setting - {{{key}: {value}}}")
+        self.settings.setSetting(key, value)
+
+    async def load_setting(self, key: str) -> Any:
+        """Return the value of the given `key` from settings.
+
+        Args:
+            key (str): The key to use to lookup the value to return.
+
+        Returns:
+            Any: The value of `key` in settings.
+        """
+
+        setting_value = self.settings.getSetting(key, None)
+
+        decky_plugin.logger.info(f"Getting setting: {{{key}: {setting_value}}}")
+        return setting_value
 
     # Function called first during the unload process, utilize this to handle your plugin being removed
     async def _unload(self):
