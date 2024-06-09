@@ -5,9 +5,10 @@
   "publish": {
     "tags": [
       "anime",
-      "media"
+      "media",
+      "entertainment"
     ],
     "description": "A plugin for checking the upcoming anime release schedule.",
-    "image": "https://opengraph.githubassets.com/1/SteamDeckHomebrew/PluginLoader"
+    "image": "https://github.com/andrewguest/decky-anime-schedule/blob/main/assets/animeschedule-preview.png"
   }
 }
