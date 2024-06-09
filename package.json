@@ -1,6 +1,6 @@
 {
   "name": "decky-anime-schedule",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "description": "A plugin for checking the upcoming anime release schedule.",
   "scripts": {
     "build": "shx rm -rf dist && rollup -c",
@@ -40,6 +40,7 @@
   },
   "dependencies": {
     "decky-frontend-lib": "^3.25.0",
+    "moment-timezone": "^0.5.45",
     "react-icons": "^4.4.0"
   },
   "pnpm": {
