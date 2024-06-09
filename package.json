@@ -1,6 +1,6 @@
 {
   "name": "decky-anime-schedule",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A plugin for checking the upcoming anime release schedule.",
   "scripts": {
     "build": "shx rm -rf dist && rollup -c",
