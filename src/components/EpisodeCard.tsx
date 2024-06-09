@@ -1,5 +1,10 @@
-import { FC } from 'react';
-import { SuspensefulImage, Focusable } from 'decky-frontend-lib';
+import { FC, CSSProperties } from 'react';
+import {
+    SuspensefulImage,
+    Focusable,
+    PanelSectionRow,
+    ButtonItem,
+} from 'decky-frontend-lib';
 import { EpisodeData } from '../routes/SchedulePage';
 
 interface EpisodeCardProps {
@@ -29,14 +34,18 @@ export const EpisodeCard: FC<EpisodeCardProps> = ({ episode }) => {
     const imageURL =
         'https://img.animeschedule.net/production/assets/public/img/' +
         episode.imageVersionRoute;
+    const episodeURL = 'https://animeschedule.net/anime/' + episode.route;
 
     return (
         /* Episode Card */
-        <Focusable
-            className={`episodeCard`}
-            ref={null}
-            focusWithinClassName="gpfocuswithin"
-            onActivate={() => {}}
+        <div
+            // className={`episodeCard`}
+            // ref={null}
+            // focusWithinClassName="gpfocuswithin"
+            // onActivate={() => {}}
+            // onClick={() => {
+            //     window.open(episodeURL);
+            // }}
             style={{
                 marginLeft: '20px',
                 marginRight: '20px',
@@ -51,17 +60,17 @@ export const EpisodeCard: FC<EpisodeCardProps> = ({ episode }) => {
                 className="episodeImageContainer"
                 style={{
                     width: '320px',
-                    height: '240px',
+                    height: '287px',
                     position: 'relative',
                 }}
             >
                 <SuspensefulImage
                     className="episodeCardImage"
                     suspenseWidth="320px"
-                    suspenseHeight="240px"
+                    suspenseHeight="287px"
                     style={{
                         width: '320px',
-                        height: '240px',
+                        height: '287px',
                         objectFit: 'cover',
                     }}
                     src={imageURL}
@@ -72,7 +81,7 @@ export const EpisodeCard: FC<EpisodeCardProps> = ({ episode }) => {
                 id="card-information"
                 className="episodeCardInfo"
                 style={{
-                    width: 'calc(100% - 240px)', // The calc is here so that the info section doesn't expand into the image
+                    width: 'calc(100% - 287px)', // The calc is here so that the info section doesn't expand into the image
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
@@ -142,9 +151,47 @@ export const EpisodeCard: FC<EpisodeCardProps> = ({ episode }) => {
                         <b>Where to watch:</b>{' '}
                         {formatServiceNames(episode.streams)}
                     </span>
+                    {/* Card Open Episode Page */}
+                    <div className="episodeCardButtonRow">
+                        <PanelSectionRow>
+                            <Focusable
+                                style={{
+                                    display: 'flex',
+                                    gap: '5px',
+                                    padding: 0,
+                                    marginTop: '13px',
+                                }}
+                            >
+                                <div
+                                    className="episodeCardButtonContainer"
+                                    style={
+                                        {
+                                            paddingTop: '0px',
+                                            paddingBottom: '0px',
+                                            // flexGrow: 1,
+                                            '--field-negative-horizontal-margin': 0,
+                                            width: '350px',
+                                        } as CSSProperties
+                                    }
+                                >
+                                    <ButtonItem
+                                        bottomSeparator="none"
+                                        layout="below"
+                                        onClick={() => {
+                                            window.open(episodeURL);
+                                        }}
+                                    >
+                                        <span className="episodeCardButtonText">
+                                            Open episode page
+                                        </span>
+                                    </ButtonItem>
+                                </div>
+                            </Focusable>
+                        </PanelSectionRow>
+                    </div>
                 </div>
             </div>
             {/* </div> */}
-        </Focusable>
+        </div>
     );
 };
