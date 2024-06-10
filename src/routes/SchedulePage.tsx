@@ -1,6 +1,5 @@
 import { VFC, useEffect, useState } from 'react';
 import { ServerAPI, Tabs } from 'decky-frontend-lib';
-import { AirType } from '../utils';
 import { EpisodesTab } from './EpisodeTab';
 
 interface Streams {
@@ -23,7 +22,7 @@ export interface EpisodeData {
     episodes: number;
     lengthMin: number;
     donghua: boolean;
-    airType: AirType;
+    airType: 'raw' | 'sub' | 'dub';
     mediaTypes: Array<object>;
     imageVersionRoute: string;
     streams: Streams;
