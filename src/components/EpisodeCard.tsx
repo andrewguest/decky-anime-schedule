@@ -39,39 +39,38 @@ export const EpisodeCard: FC<EpisodeCardProps> = ({ episode }) => {
     return (
         /* Episode Card */
         <div
-            // className={`episodeCard`}
-            // ref={null}
-            // focusWithinClassName="gpfocuswithin"
-            // onActivate={() => {}}
-            // onClick={() => {
-            //     window.open(episodeURL);
-            // }}
             style={{
                 marginLeft: '20px',
                 marginRight: '20px',
                 marginBottom: '30px',
+                paddingRight: '10px',
                 display: 'flex',
                 textOverflow: 'ellipsis',
-                // backgroundColor: '#050505',
+                backgroundColor: '#222222',
+                borderRadius: '5px',
             }}
         >
             {/* Card Image */}
             <div
                 className="episodeImageContainer"
                 style={{
-                    width: '320px',
-                    height: '287px',
+                    width: '240px',
+                    height: '300px',
                     position: 'relative',
+                    borderTopLeftRadius: '5px',
+                    borderBottomLeftRadius: '5px',
                 }}
             >
                 <SuspensefulImage
                     className="episodeCardImage"
-                    suspenseWidth="320px"
-                    suspenseHeight="287px"
+                    suspenseWidth="240px"
+                    suspenseHeight="300px"
                     style={{
-                        width: '320px',
-                        height: '287px',
+                        width: '240px',
+                        height: '300px',
                         objectFit: 'cover',
+                        borderTopLeftRadius: '5px',
+                        borderBottomLeftRadius: '5px',
                     }}
                     src={imageURL}
                 />
@@ -81,7 +80,8 @@ export const EpisodeCard: FC<EpisodeCardProps> = ({ episode }) => {
                 id="card-information"
                 className="episodeCardInfo"
                 style={{
-                    width: 'calc(100% - 287px)', // The calc is here so that the info section doesn't expand into the image
+                    // width: 'calc(100% - 240px)',
+                    width: 'calc(100% - 120px)',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
@@ -108,7 +108,9 @@ export const EpisodeCard: FC<EpisodeCardProps> = ({ episode }) => {
                             width: '80%',
                         }}
                     >
-                        <u>{episode.title}</u>
+                        <b>
+                            {episode.english ? episode.english : episode.title}
+                        </b>
                     </span>
                     {/* Card Episode Number */}
                     <span
@@ -118,7 +120,10 @@ export const EpisodeCard: FC<EpisodeCardProps> = ({ episode }) => {
                             fontSize: '1.2em',
                         }}
                     >
-                        <b>Episode:</b> {episode.episodeNumber}
+                        <b>
+                            <u>Episode #:</u>
+                        </b>{' '}
+                        {episode.episodeNumber}
                     </span>
                     {/* Card Episode Runtime */}
                     <span
@@ -127,7 +132,10 @@ export const EpisodeCard: FC<EpisodeCardProps> = ({ episode }) => {
                             fontSize: '1.2em',
                         }}
                     >
-                        <b>Runtime:</b> {episode.lengthMin ?? '?'} min
+                        <b>
+                            <u>Runtime:</u>
+                        </b>{' '}
+                        {episode.lengthMin ?? '?'} min
                     </span>
                     {/* Card Episode Date */}
                     <span
@@ -138,7 +146,10 @@ export const EpisodeCard: FC<EpisodeCardProps> = ({ episode }) => {
                             fontSize: '1.2em',
                         }}
                     >
-                        <b>Airing date & time:</b> {episode.episodeDate}
+                        <b>
+                            <u>Airing date & time:</u>
+                        </b>{' '}
+                        {episode.episodeDate}
                     </span>
                     {/* Card Where To Watch */}
                     <span
@@ -148,7 +159,9 @@ export const EpisodeCard: FC<EpisodeCardProps> = ({ episode }) => {
                             fontSize: '1.2em',
                         }}
                     >
-                        <b>Where to watch:</b>{' '}
+                        <b>
+                            <u>Where to watch:</u>
+                        </b>{' '}
                         {formatServiceNames(episode.streams)}
                     </span>
                     {/* Card Open Episode Page */}
